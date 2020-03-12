@@ -1,7 +1,28 @@
 <div class="user-details">
   <h1>My Profile</h1>
   <p>
-    <iframe width="100%" height="415" src="https://www.youtube.com/embed/KAQWzHokZXg?autoplay=1&mute=1&enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div id="player"></div>
+    <script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '415',
+          width: '100%',
+          playerVars: { 
+            listType:'playlist', 
+            list: 'RDKAQWzHokZXg' }
+        });
+      }
+    </script>
   </p>
 </div>
 <div id="contents">
