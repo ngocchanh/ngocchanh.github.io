@@ -14,10 +14,16 @@
           width: '100%',
           playerVars: { 
             listType:'playlist', 
-            list: 'RDKAQWzHokZXg' }
+            list: 'RDKAQWzHokZXg'
+          },
+          events: {
+            'onReady': onPlayerReady
+          }
         });
       }
-      player.playVideo();
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
     </script>
   </p>
 </div>
