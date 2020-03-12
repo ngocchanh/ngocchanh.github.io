@@ -17,13 +17,21 @@
             list: 'RDKAQWzHokZXg'
           },
           events: {
-            'onReady': onPlayerReady
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
           }
         });
       }
+      
       function onPlayerReady(event) {
         event.target.mute();
         event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+          event.target.unMute();
+        }
       }
     </script>
   </p>
