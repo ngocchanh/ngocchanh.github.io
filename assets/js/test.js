@@ -13,14 +13,19 @@ function onYouTubeIframeAPIReady() {
     },
     events: {
       'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
+      'onStateChange': onPlayerStateChange,
+      'onStoped': onStoped
     }
   });
+}
+                         
+function onStoped(event) {
+  event.target.playVideo();
 }
 
 function onPlayerReady(event) {
   event.target.mute();
-  event.target.stopVideo();
+  event.target.playVideo();
   event.target.playVideo();
 }
 
