@@ -25,6 +25,7 @@ function onStoped(event) {
 
 function onPlayerReady(event) {
   event.target.mute();
+  event.target.playVideo();
 }
 
 function onPlayerStateChange(event) {
