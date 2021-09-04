@@ -25,13 +25,11 @@ function onStoped(event) {
 
 function onPlayerReady(event) {
   event.target.mute();
-  event.target.playVideo();
-  event.target.playVideo();
 }
 
 function onPlayerStateChange(event) {
   if (event.data == YT.PlayerState.PLAYING) {
     event.target.unMute();
-    event.target.playVideo();
+    setTimeout(function(){event.target.playVideo()}, 900)
   }
 }
