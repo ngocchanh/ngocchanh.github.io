@@ -29,12 +29,12 @@ function onPlayerReady(event) {
 }
 
 function onPlayerStateChange(event) {
-  console.log("onPlayerStateChange", event.data, YT.PlayerState.PLAYING)
+  console.log("onPlayerStateChange", event.data, YT.PlayerState)
   if (event.data == YT.PlayerState.PLAYING) {
     event.target.unMute();
   }
   if (event.data == 2) {
-   setTimeout(function(){event.target.playVideo()}, 1000)
+   event.target.playVideo();
   }
-  
+  event.target.playVideo();
 }
