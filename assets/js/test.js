@@ -29,6 +29,7 @@ function onPlayerReady(event) {
 }
 
 function onPlayerStateChange(event) {
+  console.log("onPlayerStateChange", event.data, YT.PlayerState.PLAYING)
   if (event.data == YT.PlayerState.PLAYING) {
     event.target.unMute();
   }
