@@ -20,6 +20,7 @@ function onYouTubeIframeAPIReady() {
 
 function onPlayerReady(event) {
   event.target.mute();
+  event.target.stopVideo();
   event.target.playVideo();
 }
 
