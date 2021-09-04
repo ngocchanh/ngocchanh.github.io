@@ -33,5 +33,8 @@ function onPlayerStateChange(event) {
   if (event.data == YT.PlayerState.PLAYING) {
     event.target.unMute();
   }
-  setTimeout(function(){event.target.playVideo()}, 1000)
+  if (event.data == 2) {
+   setTimeout(function(){event.target.playVideo()}, 1000)
+  }
+  
 }
