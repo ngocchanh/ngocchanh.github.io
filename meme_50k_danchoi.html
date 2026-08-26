@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50K MEME — DÂN CHƠI EDITION</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Permanent+Marker&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated neon background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255, 20, 147, 0.15), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(0, 255, 200, 0.12), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(255, 165, 0, 0.08), transparent 50%);
+    z-index: 0;
+    animation: bgPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes bgPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 3px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* Title */
+  .title-wrap {
+    margin: 20px 0 10px;
+    text-align: center;
+    z-index: 10;
+  }
+
+  .title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(28px, 6vw, 56px);
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffd700, #00ffcc, #ff0080);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    animation: gradientShift 3s linear infinite;
+    text-shadow: 0 0 30px rgba(255, 0, 128, 0.3);
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  .subtitle {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(14px, 2.5vw, 22px);
+    color: #00ffcc;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  }
+
+  /* Canvas wrapper — the shaking container */
+  .canvas-wrap {
+    position: relative;
+    z-index: 10;
+    padding: 12px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #1a1a2e);
+    box-shadow:
+      0 0 20px rgba(255, 0, 128, 0.4),
+      0 0 40px rgba(0, 255, 204, 0.2),
+      inset 0 0 20px rgba(0, 0, 0, 0.5);
+    animation: shake 0.12s ease-in-out infinite;
+  }
+
+  /* THE SHAKE */
+  @keyframes shake {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    20%  { transform: translate(-2px, 1px) rotate(-0.3deg); }
+    40%  { transform: translate(2px, -1px) rotate(0.3deg); }
+    60%  { transform: translate(-1px, 2px) rotate(-0.2deg); }
+    80%  { transform: translate(1px, -2px) rotate(0.2deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  /* Neon border flicker */
+  .canvas-wrap::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
+    border-radius: 18px;
+    background: linear-gradient(45deg, #ff0080, #00ffcc, #ffd700, #ff0080);
+    background-size: 400% 400%;
+    z-index: -1;
+    animation: borderFlow 3s linear infinite;
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+
+  @keyframes borderFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .meme-svg {
+    display: block;
+    width: min(90vw, 700px);
+    height: auto;
+    border-radius: 8px;
+    filter: contrast(1.05) saturate(1.15);
+  }
+
+  /* Bottom buttons */
+  .btn-row {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
+    z-index: 10;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    padding: 12px 28px;
+    border: 2px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-pink {
+    border-color: #ff0080;
+    color: #ff0080;
+    background: rgba(255, 0, 128, 0.1);
+    text-shadow: 0 0 8px rgba(255, 0, 128, 0.5);
+  }
+
+  .btn-cyan {
+    border-color: #00ffcc;
+    color: #00ffcc;
+    background: rgba(0, 255, 204, 0.1);
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+  }
+
+  .btn:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 0 20px currentColor;
+  }
+
+  .btn:active { transform: scale(0.95); }
+
+  /* Shake toggle */
+  .canvas-wrap.no-shake { animation: none; }
+
+  /* Footer */
+  .footer {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 16px;
+    z-index: 10;
+  }
+
+  /* Floating money emojis */
+  .float-emoji {
+    position: fixed;
+    font-size: 28px;
+    pointer-events: none;
+    z-index: 5;
+    animation: floatUp 6s linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="title-wrap">
+  <div class="title">50K MEME — DÂN CHƠI EDITION</div>
+  <div class="subtitle">⚡ Cầm lấy 50k và tránh xa ⚡</div>
+</div>
+
+<div class="canvas-wrap" id="shakeBox">
+  <svg class="meme-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="Arial, Helvetica, sans-serif">
+    <defs>
+      <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#9fb8b0"/>
+        <stop offset="35%" stop-color="#c7d0c8"/>
+        <stop offset="70%" stop-color="#8a9290"/>
+        <stop offset="100%" stop-color="#6b7370"/>
+      </linearGradient>
+      <linearGradient id="tealHandle" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2fa9a3"/>
+        <stop offset="100%" stop-color="#1d7d79"/>
+      </linearGradient>
+      <linearGradient id="noteGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#f4b8d0"/>
+        <stop offset="50%" stop-color="#e88ab4"/>
+        <stop offset="100%" stop-color="#d96aa0"/>
+      </linearGradient>
+      <linearGradient id="shirtGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2c3e60"/>
+        <stop offset="100%" stop-color="#1a2740"/>
+      </linearGradient>
+      <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e8b890"/>
+        <stop offset="100%" stop-color="#c99a72"/>
+      </linearGradient>
+      <linearGradient id="bannerGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#6b2a2a" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#4a1c1c" stop-opacity="0.9"/>
+      </linearGradient>
+    </defs>
+
+    <rect width="800" height="600" fill="url(#bgGrad)"/>
+
+    <!-- turquoise grab handle -->
+    <rect x="690" y="20" width="80" height="26" rx="13" fill="url(#tealHandle)"/>
+    <rect x="700" y="26" width="60" height="6" rx="3" fill="#7fd4cf" opacity="0.7"/>
+
+    <!-- interior blur -->
+    <ellipse cx="120" cy="80" rx="90" ry="40" fill="#b0bbb8" opacity="0.5"/>
+    <rect x="540" y="60" width="160" height="40" rx="6" fill="#a8b3b0" opacity="0.45"/>
+    <rect x="0" y="460" width="800" height="140" fill="#5a6360" opacity="0.55"/>
+
+    <!-- Person -->
+    <g>
+      <path d="M 230 600 L 250 430 Q 400 380 550 430 L 570 600 Z" fill="url(#shirtGrad)"/>
+      <path d="M 360 430 L 400 470 L 440 430 Z" fill="#1a2740"/>
+      <rect x="375" y="395" width="50" height="50" fill="url(#skinGrad)"/>
+      <ellipse cx="400" cy="300" rx="105" ry="125" fill="url(#skinGrad)"/>
+      <ellipse cx="298" cy="305" rx="14" ry="22" fill="#d6a884"/>
+      <ellipse cx="502" cy="305" rx="14" ry="22" fill="#d6a884"/>
+      <path d="M 300 250 Q 310 175 400 170 Q 500 175 500 255 Q 495 230 470 225 Q 440 215 400 220 Q 360 215 330 225 Q 305 230 300 250 Z" fill="#1a1a1a"/>
+      <path d="M 340 270 Q 360 262 380 270" stroke="#3a2a1a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M 420 270 Q 440 262 460 270" stroke="#3a2a1a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M 345 295 Q 362 302 380 295" stroke="#2a1a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M 420 295 Q 438 302 455 295" stroke="#2a1a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M 400 305 Q 395 335 405 345 Q 400 350 395 348" stroke="#b58862" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M 375 372 Q 400 380 425 372" stroke="#8a5a4a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="335" cy="335" rx="20" ry="14" fill="#d6a884" opacity="0.5"/>
+      <ellipse cx="465" cy="335" rx="20" ry="14" fill="#d6a884" opacity="0.5"/>
+    </g>
+
+    <!-- Face-tracking frame -->
+    <g fill="none" stroke="#aef035" stroke-width="4">
+      <path d="M 285 195 L 285 215 M 285 195 L 305 195"/>
+      <path d="M 515 195 L 515 215 M 515 195 L 495 195"/>
+      <path d="M 285 405 L 285 385 M 285 405 L 305 405"/>
+      <path d="M 515 405 L 515 385 M 515 405 L 495 405"/>
+      <rect x="285" y="195" width="230" height="210" stroke-dasharray="6 5" opacity="0.85"/>
+      <rect x="290" y="408" width="70" height="16" fill="#aef035" stroke="none" opacity="0.9"/>
+    </g>
+
+    <!-- Banknote -->
+    <g transform="rotate(-8 175 430)">
+      <rect x="95" y="330" width="120" height="200" rx="4" fill="url(#noteGrad)" stroke="#b06090" stroke-width="1.5"/>
+      <rect x="102" y="337" width="106" height="186" rx="2" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.7"/>
+      <text x="155" y="352" font-size="6.5" text-anchor="middle" fill="#3a1a2a" font-weight="bold">CỘNG HÒA XÃ HỘI</text>
+      <text x="155" y="360" font-size="6.5" text-anchor="middle" fill="#3a1a2a" font-weight="bold">CHỦ NGHĨA VIỆT NAM</text>
+      <circle cx="155" cy="380" r="11" fill="none" stroke="#c9302c" stroke-width="1.2"/>
+      <text x="155" y="383" font-size="8" text-anchor="middle" fill="#c9302c">★</text>
+      <ellipse cx="155" cy="425" rx="30" ry="38" fill="#f0d8c0" stroke="#9a6a4a" stroke-width="1"/>
+      <path d="M 130 415 Q 155 395 180 415 Q 185 445 155 462 Q 125 445 130 415 Z" fill="#3a3a3a" opacity="0.15"/>
+      <text x="155" y="500" font-size="26" text-anchor="middle" fill="#c9302c" font-weight="bold">50000</text>
+      <text x="155" y="515" font-size="7" text-anchor="middle" fill="#3a1a2a">ĐỒNG</text>
+    </g>
+
+    <!-- Hand -->
+    <ellipse cx="170" cy="545" rx="55" ry="35" fill="url(#skinGrad)"/>
+    <path d="M 120 540 Q 170 525 220 540 Q 225 560 170 565 Q 115 560 120 540 Z" fill="#c99a72"/>
+
+    <!-- Left speech bubble -->
+    <g>
+      <path d="M 30 35 Q 15 70 30 105 Q 50 125 150 122 Q 250 125 265 100 Q 280 65 260 35 Q 240 18 145 20 Q 45 18 30 35 Z" fill="#ffffff" stroke="#1a1a1a" stroke-width="3"/>
+      <path d="M 235 115 L 270 160 L 215 140 Z" fill="#ffffff" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+      <text x="150" y="60" font-size="17" font-weight="bold" text-anchor="middle" fill="#1a1a1a">CÔNG TY NÀY</text>
+      <text x="150" y="85" font-size="17" font-weight="bold" text-anchor="middle" fill="#1a1a1a">KO CÓ</text>
+      <text x="150" y="110" font-size="17" font-weight="bold" text-anchor="middle" fill="#1a1a1a">TÌNH NGƯỜI</text>
+    </g>
+
+    <!-- Exclamation marks -->
+    <g fill="#d22020" font-weight="bold" font-size="34">
+      <text x="540" y="150">!</text>
+      <text x="565" y="150">!</text>
+      <text x="590" y="150">!</text>
+    </g>
+
+    <!-- Right spiky bubble -->
+    <g>
+      <polygon points="540,165 555,180 535,195 560,205 545,225 575,230 560,250 590,255 580,275 770,260 775,210 760,175 600,150 540,165" fill="#ffffff" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+      <text x="660" y="215" font-size="20" font-weight="bold" text-anchor="middle" fill="#1a1a1a">TOÀN TIỀN</text>
+      <text x="660" y="245" font-size="20" font-weight="bold" text-anchor="middle" fill="#1a1a1a">LÀ TIỀN</text>
+    </g>
+
+    <!-- Banner -->
+    <g>
+      <rect x="25" y="515" width="300" height="55" rx="10" fill="url(#bannerGrad)" stroke="#ffffff" stroke-width="2"/>
+      <text x="175" y="550" font-size="20" font-style="italic" text-anchor="middle" fill="#ff4d4d" font-family="Georgia, serif">Cầm lấy 50k và tránh xa</text>
+    </g>
+
+    <!-- Timestamp -->
+    <g>
+      <rect x="660" y="560" width="120" height="30" rx="6" fill="#1a1a1a" opacity="0.6"/>
+      <text x="675" y="580" font-size="16" fill="#ffffff">11:29</text>
+      <path d="M 735 578 l 5 6 l 10 -12" stroke="#7fd4cf" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 748 578 l 5 6 l 10 -12" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </svg>
+</div>
+
+<div class="btn-row">
+  <button class="btn btn-pink" onclick="toggleShake()">SHAKE ON/OFF</button>
+  <button class="btn btn-cyan" onclick="spawnEmoji()">💰 RẢI TIỀN 💰</button>
+</div>
+
+<div class="footer">Made with 50k &amp; no tình người 😤</div>
+
+<script>
+  function toggleShake() {
+    document.getElementById('shakeBox').classList.toggle('no-shake');
+  }
+
+  function spawnEmoji() {
+    const emojis = ['💰','💵','💸','🤑','💔','😤'];
+    for (let i = 0; i < 12; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'float-emoji';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.animationDuration = (3 + Math.random() * 4) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 7000);
+      }, i * 150);
+    }
+  }
+
+  // Auto-spawn emojis periodically
+  setInterval(() => {
+    const el = document.createElement('div');
+    el.className = 'float-emoji';
+    const emojis = ['💰','💵','💸','🤑'];
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (4 + Math.random() * 3) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 8000);
+  }, 1500);
+</script>
+
+</body>
+</html>
